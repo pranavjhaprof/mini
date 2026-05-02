@@ -630,7 +630,6 @@ def render_input_mode_selector() -> str:
         )
         if st.button("Use Upload", key="upload_mode_button", use_container_width=True):
             st.session_state["input_mode"] = "Upload Image"
-            st.rerun()
 
     with capture_col:
         capture_selected = current_mode == "Capture Image"
@@ -646,7 +645,6 @@ def render_input_mode_selector() -> str:
         )
         if st.button("Use Capture", key="capture_mode_button", use_container_width=True):
             st.session_state["input_mode"] = "Capture Image"
-            st.rerun()
 
     return st.session_state.get("input_mode", current_mode)
 
@@ -656,6 +654,7 @@ def render_input_mode_selector() -> str:
 def _store_selected_image(payload: bytes, source: str) -> tuple[np.ndarray, Image.Image]:
     st.session_state["selected_image_bytes"] = payload
     st.session_state["selected_image_source"] = source
+    st.session_state["image_ready"] = True
     return bytes_to_bgr_image(payload), Image.open(io.BytesIO(payload)).convert("RGB")
 
 
@@ -1215,7 +1214,7 @@ def main() -> None:
 
     st.markdown('<div class="panel">', unsafe_allow_html=True)
     input_bgr, preview_image = load_input_image()
-    if preview_image is not None:
+    if preview_image is not None and st.session_state.get("image_ready", True):
         st.image(preview_image, caption="Selected image", use_container_width=True)
 <<<<<<< HEAD
 =======
@@ -1224,11 +1223,15 @@ def main() -> None:
             if st.button("Clear photo", key="clear_photo_button", use_container_width=True):
                 st.session_state.pop("selected_image_bytes", None)
                 st.session_state.pop("selected_image_source", None)
-                st.rerun()
+                st.session_state["image_ready"] = False
         with analyze_hint_col:
             st.caption("Image ready. Click the analyze button below to start the skin assessment.")
 >>>>>>> 013d08b (Deploy skin analysis app to Hugging Face Space)
     st.markdown("</div>", unsafe_allow_html=True)
+
+    if st.session_state.get("image_ready") is False:
+        st.info("Upload or capture a clear, front-facing image to begin the analysis.")
+        return
 
     if input_bgr is None:
         st.info("Upload or capture a clear, front-facing image to begin the analysis.")
