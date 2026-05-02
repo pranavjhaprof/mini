@@ -596,6 +596,15 @@ def render_metric_card(title: str, prediction: PredictionResult) -> None:
     )
 
 
+def is_hf_space() -> bool:
+    return bool(
+        os.getenv("SPACE_ID")
+        or os.getenv("SPACE_HOST")
+        or os.getenv("HF_SPACE_ID")
+        or os.getenv("SPACE_AUTHOR_NAME")
+    )
+
+
 def render_probability_table(title: str, probabilities: dict[str, float]) -> None:
     ordered = sorted(probabilities.items(), key=lambda item: item[1], reverse=True)
     with st.container(border=False):
@@ -745,7 +754,27 @@ def render_recommendation_payload(payload: RecommendationPayload) -> None:
         st.markdown('<div class="product-divider"></div>', unsafe_allow_html=True)
 
 
-def inject_styles() -> None:
+def inject_styles(hf_mode: bool = False) -> None:
+    hf_css = ""
+    if hf_mode:
+        hf_css = """
+            html {
+                overflow-y: scroll !important;
+            }
+            body {
+                overflow-y: scroll !important;
+                overflow-x: hidden !important;
+            }
+            [data-testid="stAppViewContainer"] {
+                overflow-x: hidden !important;
+            }
+            [data-testid="stSidebar"] {
+                display: none !important;
+            }
+            [data-testid="collapsedControl"] {
+                display: none !important;
+            }
+        """
     st.markdown(
         """
         <style>
@@ -771,6 +800,8 @@ def inject_styles() -> None:
             .block-container {
                 padding-top: 1.8rem;
                 padding-bottom: 3rem;
+                max-width: 1100px;
+                margin: 0 auto;
             }
             .hero-shell {
                 padding: 1.6rem 1.8rem;
@@ -1102,6 +1133,9 @@ def inject_styles() -> None:
                     border-radius: 16px;
                 }
             }
+        """
+        + hf_css
+        + """
         </style>
         """,
         unsafe_allow_html=True,
@@ -1206,10 +1240,12 @@ def render_sidebar() -> None:
 
 
 def main() -> None:
-    st.set_page_config(page_title="Skin Analysis Clinic", layout="wide")
+    hf_mode = is_hf_space()
+    st.set_page_config(page_title="Skin Analysis Clinic", layout="wide", initial_sidebar_state="collapsed")
     ensure_requirements_file()
-    inject_styles()
-    render_sidebar()
+    inject_styles(hf_mode=hf_mode)
+    if not hf_mode:
+        render_sidebar()
     render_header()
 
     st.markdown('<div class="panel">', unsafe_allow_html=True)
