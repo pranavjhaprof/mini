@@ -1,3 +1,12 @@
+---
+title: AI Skin Analysis App
+emoji: 🧴
+colorFrom: blue
+colorTo: cyan
+sdk: docker
+app_port: 7860
+---
+
 # Skin Analysis Web App
 
 A production-oriented Streamlit application for AI-assisted skin analysis and skincare recommendations.
@@ -142,8 +151,7 @@ python -m streamlit run app.py
 Supported environment variables:
 
 - `GEMINI_API_KEY`
-- `GOOGLE_API_KEY`
-- `GEMINI_MODEL`
+
 
 ## UI Overview
 
