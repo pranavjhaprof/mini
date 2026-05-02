@@ -55,7 +55,11 @@ SKIN_TYPE_HEAD_UNITS = 256
 SKIN_TYPE_DROPOUT = 0.30
 UNDERTONE_IMAGE_SIZE = 64
 
+<<<<<<< HEAD
 DEFAULT_REQUIREMENTS = """streamlit>=1.35,<2.0
+=======
+DEFAULT_REQUIREMENTS = """streamlit>=-r,<2.0
+>>>>>>> 013d08b (Deploy skin analysis app to Hugging Face Space)
 numpy>=1.24,<3.0
 opencv-python-headless>=4.10
 Pillow>=10.0
@@ -647,6 +651,26 @@ def render_input_mode_selector() -> str:
     return st.session_state.get("input_mode", current_mode)
 
 
+<<<<<<< HEAD
+=======
+def _store_selected_image(payload: bytes, source: str) -> tuple[np.ndarray, Image.Image]:
+    st.session_state["selected_image_bytes"] = payload
+    st.session_state["selected_image_source"] = source
+    return bytes_to_bgr_image(payload), Image.open(io.BytesIO(payload)).convert("RGB")
+
+
+def _restore_selected_image(expected_source: str) -> tuple[np.ndarray | None, Image.Image | None]:
+    payload = st.session_state.get("selected_image_bytes")
+    source = st.session_state.get("selected_image_source")
+    if not payload or source != expected_source:
+        return None, None
+    try:
+        return bytes_to_bgr_image(payload), Image.open(io.BytesIO(payload)).convert("RGB")
+    except Exception:
+        return None, None
+
+
+>>>>>>> 013d08b (Deploy skin analysis app to Hugging Face Space)
 def render_user_summary(analysis: AnalysisResult) -> None:
     message = (
         f"Your skin profile looks {analysis.skin_type.label.lower()} with a {analysis.undertone.label.lower()} undertone. "
@@ -1125,6 +1149,7 @@ def load_input_image() -> tuple[np.ndarray | None, Image.Image | None]:
     st.caption("Use a clear, front-facing photo in soft daylight for the most accurate analysis.")
 
     if input_mode == "Upload Image":
+<<<<<<< HEAD
         uploaded = st.file_uploader("Upload a facial image", type=["jpg", "jpeg", "png", "webp"])
         if uploaded is None:
             return None, None
@@ -1136,6 +1161,29 @@ def load_input_image() -> tuple[np.ndarray | None, Image.Image | None]:
         return None, None
     payload = captured.getvalue()
     return bytes_to_bgr_image(payload), Image.open(io.BytesIO(payload)).convert("RGB")
+=======
+        uploaded = st.file_uploader(
+            "Upload a facial image",
+            type=["jpg", "jpeg", "png", "webp"],
+            key="upload_input",
+            help="JPG, PNG, or WEBP. Front-facing images work best.",
+        )
+        if uploaded is not None:
+            payload = uploaded.getvalue()
+            return _store_selected_image(payload, "upload")
+        return _restore_selected_image("upload")
+
+    try:
+        captured = st.camera_input("Capture a live image", key="camera_input")
+    except Exception as exc:
+        st.warning(f"Camera access is currently unavailable in this browser session: {exc}")
+        return _restore_selected_image("camera")
+
+    if captured is not None:
+        payload = captured.getvalue()
+        return _store_selected_image(payload, "camera")
+    return _restore_selected_image("camera")
+>>>>>>> 013d08b (Deploy skin analysis app to Hugging Face Space)
 
 
 def render_sidebar() -> None:
@@ -1169,6 +1217,17 @@ def main() -> None:
     input_bgr, preview_image = load_input_image()
     if preview_image is not None:
         st.image(preview_image, caption="Selected image", use_container_width=True)
+<<<<<<< HEAD
+=======
+        clear_col, analyze_hint_col = st.columns([1, 3], vertical_alignment="center")
+        with clear_col:
+            if st.button("Clear photo", key="clear_photo_button", use_container_width=True):
+                st.session_state.pop("selected_image_bytes", None)
+                st.session_state.pop("selected_image_source", None)
+                st.rerun()
+        with analyze_hint_col:
+            st.caption("Image ready. Click the analyze button below to start the skin assessment.")
+>>>>>>> 013d08b (Deploy skin analysis app to Hugging Face Space)
     st.markdown("</div>", unsafe_allow_html=True)
 
     if input_bgr is None:
