@@ -2,7 +2,7 @@
 title: AI Skin Analysis App
 emoji: 🧴
 colorFrom: blue
-colorTo: cyan
+colorTo: indigo
 sdk: docker
 app_port: 7860
 ---
