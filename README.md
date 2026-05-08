@@ -20,6 +20,10 @@ This project combines four selected models into one deployable experience:
 
 The app analyzes a face image, predicts tone/type/undertone, and generates a simple skincare routine with product recommendations.
 
+## 🚀 Live Demo
+
+**Try the app now:** [AI Skin Analysis App on Hugging Face Spaces](https://pranav2803-ai-skin-analysis-app.hf.space/)
+
 ## Features
 
 - Upload image or capture image from camera
@@ -163,45 +167,57 @@ The Streamlit app is organized into three steps:
 
 The recommendation section is designed to stay useful even if the LLM is unavailable.
 
-## Deployment Notes
+## Deployment Instructions
 
-This project is suitable for:
+### Hugging Face Spaces
 
-- Local demo use
-- GitHub version control
-- Hugging Face Spaces deployment
+The app is already deployed to [Hugging Face Spaces](https://pranav2803-ai-skin-analysis-app.hf.space/) with Docker.
 
-Before deployment:
+**To deploy your own version:**
 
-- Do not commit `.env`
+1. Fork this repository or create a new Hugging Face Space
+2. Connect your GitHub repository to Hugging Face Spaces
+3. Set the SDK to Docker in the Space settings
+4. Add the following secrets in Space settings:
+   - `GEMINI_API_KEY`: Your Gemini API key
+5. Hugging Face will automatically build and deploy from the `hf-deploy` branch
+6. Push updates to the `hf-deploy` branch to trigger automatic redeployment
+
+**Before deploying:**
+
+- Ensure `.env` is in `.gitignore` (never commit secrets)
 - Keep `.env.example` with placeholders only
-- Make sure all required model files are included or available in deployment storage
-- Add the Gemini API key as a secret in the deployment platform
+- Verify all required model files are in the repository
+- Add the Gemini API key as a Space secret, not in the code
+- Test locally with `streamlit run app.py` before pushing
 
 ## Security Notes
 
-- `.env` should remain private
+- `.env` should remain private and added to `.gitignore`
 - API keys must never be hardcoded into `app.py`
-- Use deployment secrets for production hosting
+- Always use deployment secrets (Space Secrets on Hugging Face) for production hosting
+- Rotate API keys regularly
+- Do not share API keys in issues or pull requests
 
-<<<<<<< HEAD
-=======
 ## Current Status
 
-- Unified Streamlit app implemented
-- UI polished for presentation and public demo
-- Fallback recommendation flow added
-- GitHub-ready repository structure prepared
+✅ **Deployed to production** on Hugging Face Spaces  
+✅ Unified Streamlit app implemented  
+✅ UI polished for presentation and public demo  
+✅ Fallback recommendation flow added  
+✅ GitHub-ready repository structure prepared  
+✅ Docker containerization complete  
+✅ Automated deployment pipeline configured  
 
-## Next Recommended Steps
+## Future Enhancements
 
-- Push the project to GitHub
-- Deploy to Hugging Face Spaces
-- Add platform secrets for Gemini
-- Test the hosted inference flow end to end
+- Add sample images or demo GIF to README
+- Document model training notebooks
+- Implement analysis history/save feature
+- Support more skin classes and broader datasets
+- Add PDF/report export functionality
+- Implement user feedback loop for model improvement
 
 ## License
 
-Add your preferred license here.
-
->>>>>>> 013d08b (Deploy skin analysis app to Hugging Face Space)
+MIT License - feel free to use this project for educational and commercial purposes. See LICENSE file for details.
